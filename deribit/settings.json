@@ -16,8 +16,8 @@
         "db_password": "123456",
         "db_name": "deribit_db",
         "db_table": "orders",
-        "db_host": "database",
-        "db_port": 3310
+        "db_host": "127.0.0.1",
+        "db_port": 3306
     }
 }
 
