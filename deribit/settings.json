@@ -1,0 +1,23 @@
+{
+    "credentials":
+    {
+        "client_id": "ADUjz_hH",
+        "client_secret": "0c8En7eTHDa-WUeC2XVxe0ZfTaoXYvV6Cx9bYyQhke8",
+        "client_url": "wss://test.deribit.com/ws/api/v2"
+    },
+    "robot":
+    {
+        "gap": 100.0,
+        "gap_ignore": 50.0
+    },
+    "db":
+    {
+        "db_user": "root",
+        "db_password": "123456",
+        "db_name": "deribit_db",
+        "db_table": "orders",
+        "db_host": "database",
+        "db_port": 3310
+    }
+}
+
