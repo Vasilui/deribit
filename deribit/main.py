@@ -78,7 +78,7 @@ class Strategy:
 
 
 def main():
-    settings = LoadSettigs("./deribit/settings.json")
+    settings = LoadSettigs("settings.json")
     robot_settings = settings.get_robot_settings()
     credentials = settings.get_credentials()
     db_settings = settings.get_db_settings()

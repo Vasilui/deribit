@@ -7,31 +7,22 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: deribit_db
-      MYSQL_USER: babaska
-      MYSQL_PASSWORD: Cfdjhbyf33
+      MYSQL_ROOT_HOST: '%'
     container_name: database
+    restart: always
     ports:
       - 3310:3306
     expose:
       - 3306
- #   networks:
- #     - my_net
     volumes:
       - ./db_deribit:/var/lib/mysql
 
   python_app:
-    build:
-      context: .
-      dockerfile: Dockerfile
- #   networks:
- #     - my_net
+    build: .
+    container_name: deribit_app
     ports:
     - 80:80
+    working_dir: /app/deribit
+    command: python main.py
     depends_on:
       - mysql_db
-    command:
-      python ./deribit/main.py
-
-#networks:
-# my_net:
-#    driver: bridge
