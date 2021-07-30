@@ -21,6 +21,7 @@ services:
     build: .
     image: deribit:app
     container_name: deribit_app
+    restart: always
     ports:
     - 80:80
     working_dir: /app/deribit
