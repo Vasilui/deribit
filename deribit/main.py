@@ -25,6 +25,8 @@ class Strategy:
                               self.order.amount, self.order.price)
 
     def update_order(self, order_info, type):
+        self.order.price = order_info['price']
+        self.order.amount = order_info['filled_amount']
         self.client_db.update(order_info['order_id'],
                               type,
                               order_info['price'],

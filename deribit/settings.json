@@ -17,7 +17,7 @@
         "db_name": "deribit_db",
         "db_table": "orders",
         "db_host": "database",
-        "db_port": 3310
+        "db_port": 3306
     }
 }
 
