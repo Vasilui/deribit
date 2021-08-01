@@ -40,6 +40,7 @@ class Strategy:
             curr_price = self.client.get_mark_price() - self.gap/2.0
             self.buy_orders(curr_price, self.order.amount)
         else:
+            print(order_info)
             print('buy order open:', order_info['result']['order']['price'])
             self.insert_order(order_info['result']['order'], price, amount)
 

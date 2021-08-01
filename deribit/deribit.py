@@ -26,7 +26,7 @@ class Client:
             "method": None,
         }
 
-    async def private_api(self, request):
+    def prepare_data_for_private_api(self):
         options: dict[str, Optional[str]] = {
             "grant_type": "client_credentials",
             "client_id": self.client_id,
@@ -36,24 +36,29 @@ class Client:
         self.json["method"] = "public/auth"
         self.json["params"] = options
 
+    async def private_sub(self, request):
+        self.prepare_data_for_private_api()
         async with websockets.connect(self.client_url) as websocket:
             await websocket.send(json.dumps(self.json))
+            await websocket.recv()
             while websocket.open:
-                response = await websocket.recv()
-
-                if "private/subscribe" in request:
-                    await websocket.send(request)
-                    while websocket.open:
-                        response = await websocket.recv()
-                        response = json.loads(response)
-                        print(response)
-
-                else:
-                    await websocket.send(request)
+                await websocket.send(request)
+                while websocket.open:
                     response = await websocket.recv()
                     response = json.loads(response)
-                    break
-            return response
+                    print(response)
+                    return self.private_sub(request)
+
+    async def private_api(self, request):
+        self.prepare_data_for_private_api()
+        async with websockets.connect(self.client_url) as websocket:
+            await websocket.send(json.dumps(self.json))
+            await websocket.recv()
+            if websocket.open:
+                await websocket.send(request)
+                response = await websocket.recv()
+                response = json.loads(response)
+                return response
 
     async def public_api(self, request):
         async with websockets.connect(self.client_url) as websocket:
@@ -146,3 +151,9 @@ class Client:
         self.json["params"] = options
         res = loop(self.private_api, self.json)
         return res["result"]
+
+    def user_trades(self):
+        options = {"channels": ["user.trades.BTC-PERPETUAL.1"]}
+        self.json["method"] = "private/subscribe"
+        self.json["params"] = options
+        print(loop(self.private_sub, self.json))
