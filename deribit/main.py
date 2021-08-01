@@ -25,7 +25,8 @@ class Strategy:
     def update_order(self, order_info, type):
         self.order.price = order_info['price']
         self.order.amount = order_info['amount']
-        print('filled_amount = ', self.order.amount)
+        if (amount := order_info['filled_amount']) > 0:
+            self.order.amount = amount
         self.client_db.update(order_info['order_id'],
                               type,
                               order_info['price'],
@@ -57,7 +58,6 @@ class Strategy:
             curr_price = self.client.get_mark_price()
             order = self.client.get_order_state(self.order.id)
             self.gap, self.gap_ignore = get_robot_settings()
-            print('gap = ', self.gap, 'gap_ignore = ',  self.gap_ignore)
             if order['order_state'] != 'filled':
                 stop_buy_price = self.order.price + self.gap + self.gap_ignore
                 stop_sell_price = self.order.price - self.gap - self.gap_ignore
