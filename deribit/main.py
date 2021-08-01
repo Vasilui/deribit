@@ -25,7 +25,7 @@ class Strategy:
     def update_order(self, order_info, type):
         self.order.price = order_info['price']
         self.order.amount = order_info['amount']
-        if (amount := order_info['filled_amount']) > 0:
+        if (amount := order_info['filled_amount']) > 0.0:
             self.order.amount = amount
         self.client_db.update(order_info['order_id'],
                               type,
@@ -35,12 +35,24 @@ class Strategy:
     def buy_orders(self, price, amount):
         order_info = self.client.buy("BTC-PERPETUAL", amount, "limit", False,
                                      price, True)
-        self.insert_order(order_info, price, amount)
+        if 'error' in order_info:
+            print('Error buy: ', order_info['error'])
+            curr_price = self.client.get_mark_price() - self.gap/2.0
+            self.buy_orders(curr_price, self.order.amount)
+        else:
+            print('buy order open:', order_info['result']['order']['price'])
+            self.insert_order(order_info['result']['order'], price, amount)
 
     def sell_orders(self, price, amount):
         order_info = self.client.sell("BTC-PERPETUAL", amount, "limit", False,
                                       price, True)
-        self.insert_order(order_info, price, amount)
+        if 'error' in order_info:
+            print('Error, sell: ', order_info['error'])
+            curr_price = self.client.get_mark_price()+self.gap
+            self.sell_orders(curr_price, self.order.amount)
+        else:
+            print('sell order open: ', order_info['result']['order']['price'])
+            self.insert_order(order_info['result']['order'], price, amount)
 
     def cancel_order(self, curr_price, direction, order):
         print(f'cancel order {direction}')
