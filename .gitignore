@@ -112,5 +112,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-./.idea
-./db_deribit
+.idea/
+db_deribit/

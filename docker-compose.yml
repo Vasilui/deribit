@@ -27,6 +27,8 @@ services:
     command: ["../wait-for-it.sh", "database:3306", "--", "python", "main.py"]
     depends_on:
       - mysql_db
+    volumes:
+    - ./deribit/settings.json:/var/deribit/settings.json
 
 volumes:
   db_deribit:

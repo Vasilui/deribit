@@ -88,6 +88,7 @@ class Client:
         self.json["method"] = "private/buy"
         self.json["params"] = options
         res = loop(self.private_api, self.json)
+        print(res)
         print('buy order price = ', res['result']['order']['price'])
         return res['result']['order']
 
@@ -108,6 +109,9 @@ class Client:
         self.json["method"] = "private/sell"
         self.json["params"] = options
         res = loop(self.private_api, self.json)
+        print(res)
+        if 'error' in res:
+            print(res['error'])
         print('sell: ', res['result']['order']['price'])
         return res['result']['order']
 

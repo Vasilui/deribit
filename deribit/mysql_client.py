@@ -44,18 +44,15 @@ class ClientDB:
         self.write_to_db(query)
 
     def create_db(self):
-        query = f'show tables from {self.db.db_name} like "{self.db.db_table}";'
-        res = self.write_to_db(query)
-        if not res:
-            query = """
-                CREATE TABLE orders (
-                    id int NOT NULL AUTO_INCREMENT,
-                    order_id varchar(20) NOT NULL,
-                    order_type varchar(5) NOT NULL,
-                    order_status varchar(10) NOT NULL,
-                    order_amount float NOT NULL,
-                    order_price float NOT NULL,
-                    PRIMARY KEY (id)
-                ) ENGINE=InnoDB
-            """
-            self.write_to_db(query)
+        query = """
+            CREATE TABLE IF NOT EXISTS orders (
+                id int NOT NULL AUTO_INCREMENT,
+                order_id varchar(20) NOT NULL,
+                order_type varchar(5) NOT NULL,
+                order_status varchar(10) NOT NULL,
+                order_amount float NOT NULL,
+                order_price float NOT NULL,
+                PRIMARY KEY (id)
+            ) ENGINE=InnoDB
+        """
+        self.write_to_db(query)

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel
 
 
-@dataclass(frozen=True)
+@dataclass
 class RobotSettings(BaseModel):
     gap: float
     gap_ignore: float

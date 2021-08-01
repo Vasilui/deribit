@@ -1,4 +1,4 @@
-from loading import LoadSettigs, RobotSettings
+from loading import LoadSettigs, get_robot_settings
 from deribit import Client
 from base_classes import Order
 from mysql_client import ClientDB
@@ -7,13 +7,11 @@ from mysql_client import ClientDB
 class Strategy:
     def __init__(self,
                  client: Client,
-                 settings: RobotSettings,
                  client_db: ClientDB) -> None:
         self.client = client
         self.client_db = client_db
-        self.gap = settings.gap
-        self.gap_ignore = settings.gap_ignore
         self.order = Order('', "buy", False, 0.0, 1000.0)
+        self.gap, self.gap_ignore = get_robot_settings()
 
     def insert_order(self, order_info, price, amount):
         self.order.id = order_info["order_id"]
@@ -26,7 +24,8 @@ class Strategy:
 
     def update_order(self, order_info, type):
         self.order.price = order_info['price']
-        self.order.amount = order_info['filled_amount']
+        self.order.amount = order_info['amount']
+        print('filled_amount = ', self.order.amount)
         self.client_db.update(order_info['order_id'],
                               type,
                               order_info['price'],
@@ -57,6 +56,8 @@ class Strategy:
         while True:
             curr_price = self.client.get_mark_price()
             order = self.client.get_order_state(self.order.id)
+            self.gap, self.gap_ignore = get_robot_settings()
+            print('gap = ', self.gap, 'gap_ignore = ',  self.gap_ignore)
             if order['order_state'] != 'filled':
                 stop_buy_price = self.order.price + self.gap + self.gap_ignore
                 stop_sell_price = self.order.price - self.gap - self.gap_ignore
@@ -80,8 +81,7 @@ class Strategy:
 
 
 def main():
-    settings = LoadSettigs("settings.json")
-    robot_settings = settings.get_robot_settings()
+    settings = LoadSettigs()
     credentials = settings.get_credentials()
     db_settings = settings.get_db_settings()
     client_db = ClientDB(db_settings)
@@ -90,7 +90,7 @@ def main():
                     credentials.client_id,
                     credentials.client_secret,
                     credentials.client_url)
-    strategy = Strategy(client, robot_settings, client_db)
+    strategy = Strategy(client, client_db)
     strategy.run()
 
 
